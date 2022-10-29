@@ -32,7 +32,7 @@ public class RabbitMQClient {
             channel.queueDeclare(queueName, false, false, false, null);
 
             String message = new ObjectMapper().writeValueAsString(example);
-            channel.basicPublish("", "routing_key", new AMQP.BasicProperties.Builder().build(), message.getBytes(StandardCharsets.UTF_8));
+            channel.basicPublish("", queueName, null, message.getBytes(StandardCharsets.UTF_8));
             return message;
         } catch (Exception e) {
             throw new RuntimeException(e);
