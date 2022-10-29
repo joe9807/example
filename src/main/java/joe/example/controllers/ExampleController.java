@@ -1,5 +1,6 @@
 package joe.example.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
 import joe.example.entity.Example;
 import joe.example.service.ExampleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,20 +10,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Provider;
+import java.util.List;
 
 @RestController
 public class ExampleController {
     @Autowired
     private Provider<ExampleService> exampleService;
 
+    @Operation(summary = "Send Message")
     @GetMapping("/send")
     public String send() {
         return exampleService.get().sendMessage();
     }
 
+    @Operation(summary = "Receive Message")
     @GetMapping("/receive")
     public String receive() {
         return exampleService.get().receiveMessage();
+    }
+
+    @Operation(summary = "List all Messages")
+    @GetMapping("/list")
+    public List<Example> list() {
+        return exampleService.get().findAll();
     }
 
     @PostMapping("/callback")

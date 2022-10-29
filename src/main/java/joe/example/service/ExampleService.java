@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @Service
 public class ExampleService {
@@ -34,5 +35,9 @@ public class ExampleService {
 
     public Example saveExample(Example example) {
         return repository.save(example);
+    }
+
+    public List<Example> findAll(){
+        return repository.findAll();
     }
 }
