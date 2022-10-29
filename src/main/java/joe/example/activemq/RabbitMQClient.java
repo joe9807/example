@@ -50,11 +50,15 @@ public class RabbitMQClient {
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 System.out.println("Consumer has started.");
+                if (true) throw new RuntimeException("11");
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
                 Example example = new ObjectMapper().readValue(message, Example.class);
                 example.setState(ExampleState.UPDATED);
                 ExampleHttpClient.sendRequest(example);
             };
+            //if false than all only one consumer will fail. otherwise all consumers will fail
+            //so if consumer fails before ack message then rabbitmq returns message to the queue
+            //and that message will receive another consumer
             channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
 
             return responseWait;
