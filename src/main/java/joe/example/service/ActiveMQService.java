@@ -12,15 +12,15 @@ import javax.inject.Inject;
 import java.util.List;
 
 @Service
-public class ExampleService {
+public class ActiveMQService {
     private final ActiveMQClient activeMQClient;
     private final ExampleRepository repository;
 
-    @Value("${callback.url}")
+    @Value("${rabbitmq.callback.url}")
     private String callbackUrl;
 
     @Inject
-    public ExampleService(ActiveMQClient activeMQClient, ExampleRepository repository) {
+    public ActiveMQService(ActiveMQClient activeMQClient, ExampleRepository repository) {
         this.activeMQClient = activeMQClient;
         this.repository = repository;
     }
