@@ -20,10 +20,10 @@ import javax.jms.TextMessage;
 @Component
 @PropertySource("classpath:application.properties")
 public class ActiveMQClient {
-    @Value("${message.broker.url}")
+    @Value("${activemq.message.broker.url}")
     private String messageBrokerUrl;
 
-    @Value("${queue.name}")
+    @Value("${activemq.queue.name}")
     private String queueName;
 
     @Value("${response.wait}")
