@@ -56,10 +56,10 @@ public class RabbitMQClient {
                 example.setState(ExampleState.UPDATED);
                 ExampleHttpClient.sendRequest(example);
             };
-            //if false than all only one consumer will fail. otherwise all consumers will fail
+            //if true then only one consumer will fail. otherwise all consumers will fail
             //so if consumer fails before ack message then rabbitmq returns message to the queue
             //and that message will receive another consumer
-            channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
+            channel.basicConsume(queueName, false, deliverCallback, consumerTag -> { });
 
             return responseWait;
         } catch (Exception e) {
