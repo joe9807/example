@@ -1,10 +1,9 @@
 package joe.example.service;
 
-import joe.example.activemq.ActiveMQClient;
+import joe.example.client.ActiveMQClient;
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
 import joe.example.repository.ExampleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

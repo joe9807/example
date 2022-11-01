@@ -1,6 +1,6 @@
 package joe.example.service;
 
-import joe.example.activemq.RabbitMQClient;
+import joe.example.client.RabbitMQClient;
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
 import joe.example.repository.ExampleRepository;

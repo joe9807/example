@@ -1,4 +1,4 @@
-package joe.example.activemq;
+package joe.example.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import joe.example.entity.Example;
