@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.List;
 
 @Service
-public class ActiveMQService {
+public class ActiveMQService extends GenericMQService {
     private final ActiveMQClient activeMQClient;
-    private final ExampleRepository repository;
 
     @Value("${rabbitmq.callback.url}")
     private String callbackUrl;
@@ -25,18 +23,12 @@ public class ActiveMQService {
     }
 
     public String sendMessage() {
-        return activeMQClient.sendMessage(saveExample(Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build()));
+        Example example = Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
+        return activeMQClient.sendMessage(saveExample(example));
     }
 
     public String receiveMessage(){
         return activeMQClient.receiveMessage();
     }
 
-    public Example saveExample(Example example) {
-        return repository.save(example);
-    }
-
-    public List<Example> findAll(){
-        return repository.findAll();
-    }
 }

@@ -37,9 +37,14 @@ public class RabbitMQController {
         return rabbitMQService.findAll();
     }
 
+    @Operation(summary = "Delete All Messages")
+    @GetMapping("/delete")
+    public void deleteAll() {
+        rabbitMQService.deleteAll();
+    }
+
     @PostMapping("/callback")
     public Example callback(@RequestBody Example example) {
-        rabbitMQService.saveExample(example);
-        return example;
+        return rabbitMQService.saveExample(example);
     }
 }

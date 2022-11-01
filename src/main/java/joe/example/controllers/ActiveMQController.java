@@ -37,9 +37,14 @@ public class ActiveMQController {
         return exampleService.get().findAll();
     }
 
+    @Operation(summary = "Delete All Messages")
+    @GetMapping("/delete")
+    public void deleteAll() {
+        exampleService.get().deleteAll();
+    }
+
     @PostMapping("/callback")
     public Example callback(@RequestBody Example example) {
-        exampleService.get().saveExample(example);
-        return example;
+        return exampleService.get().saveExample(example);
     }
 }
