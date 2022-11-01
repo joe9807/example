@@ -15,7 +15,7 @@ public class RabbitMQService extends GenericMQService {
     @Value("${rabbitmq.callback.url}")
     private String callbackUrl;
 
-    public String send(){
+    public String sendMessage(){
         Example example = Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
         return rabbitMQClient.sendMessage(repository.save(example));
     }
