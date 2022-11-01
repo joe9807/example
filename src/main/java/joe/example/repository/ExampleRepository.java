@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExampleRepository extends JpaRepository<Example, Long> {
-    Example save(Example example);
-    Example getById(long id);
 }
