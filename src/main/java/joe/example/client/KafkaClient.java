@@ -1,5 +1,6 @@
 package joe.example.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
@@ -9,7 +10,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @EnableKafka
 @Component
@@ -44,32 +46,47 @@ public class KafkaClient {
     @Value("${response.wait}")
     private String responseWait;
 
+    public String sendMessages(List<Example> examples){
+        return examples.stream().map(example-> {
+            try {
+                return new ObjectMapper().writeValueAsString(example);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }).peek(this::send).collect(Collectors.joining("\n"));
+    }
+
     public String sendMessage(Example example) {
         try {
-            String str = new ObjectMapper().writeValueAsString(example);
-            new KafkaTemplate<>(producerFactory()).send(queueName, str).addCallback(new ListenableFutureCallback<SendResult<String, String>>(){
-
-                @Override
-                public void onSuccess(SendResult<String, String> result) {
-                    System.out.println("message successfully sent...");
-                }
-
-                @Override
-                public void onFailure(Throwable ex) {
-                    System.out.println("exception during message sending "+ ex.getMessage());
-                }
-            });
-
-            return str;
+            String message = new ObjectMapper().writeValueAsString(example);
+            send(message);
+            return message;
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void send(String message){
+        new KafkaTemplate<>(producerFactory()).send(queueName, message).addCallback(new ListenableFutureCallback<SendResult<String, String>>(){
+
+            @Override
+            public void onSuccess(SendResult<String, String> result) {
+                System.out.println("message "+message+" successfully sent...");
+            }
+
+            @Override
+            public void onFailure(Throwable ex) {
+                System.out.println("exception during message sending "+ ex.getMessage());
+            }
+        });
     }
 
     @KafkaListener(topics = "${kafka.queue.name}", groupId = "joe_group")
     public void listener(String message){
         try {
             Example example = new ObjectMapper().readValue(message, Example.class);
+            System.out.println(example);
             example.setState(ExampleState.UPDATED);
             ExampleHttpClient.sendRequest(example);
         }catch (Exception e){

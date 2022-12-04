@@ -1,9 +1,11 @@
 package joe.example.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import joe.example.entity.Example;
 import joe.example.service.KafkaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,13 @@ public class KafkaController {
         return kafkaService.sendMessage();
     }
 
+    @Operation(summary = "Send Messages")
+    @Parameter(name="number", example="10" )
+    @PostMapping("/sendNumber")
+    public String sendNumber(int number){
+        return kafkaService.sendMessages(number);
+    }
+
     @Operation(summary = "List all Messages")
     @GetMapping("/list")
     public List<Example> list() {
@@ -31,7 +40,7 @@ public class KafkaController {
     }
 
     @Operation(summary = "Delete All Messages")
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public void deleteAll() {
         kafkaService.deleteAll();
     }

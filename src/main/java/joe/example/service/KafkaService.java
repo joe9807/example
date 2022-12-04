@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class KafkaService extends GenericMQService{
@@ -25,5 +28,11 @@ public class KafkaService extends GenericMQService{
     public String sendMessage() {
         Example example = Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
         return kafkaClient.sendMessage(saveExample(example));
+    }
+
+    public String sendMessages(int number) {
+        List<Example> examples = IntStream.range(0, number).mapToObj(unused->Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build())
+                .map(this::saveExample).collect(Collectors.toList());
+        return kafkaClient.sendMessages(examples);
     }
 }

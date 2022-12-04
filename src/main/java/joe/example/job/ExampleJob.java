@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Component
 public class ExampleJob {
-    @Scheduled(fixedRate = 5000)
+    //@Scheduled(fixedRate = 5000)
     public void reportCurrentTime() {
         System.out.println(new Date().toString());
     }

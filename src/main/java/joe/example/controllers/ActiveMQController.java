@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import joe.example.entity.Example;
 import joe.example.service.ActiveMQService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,7 +39,7 @@ public class ActiveMQController {
     }
 
     @Operation(summary = "Delete All Messages")
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public void deleteAll() {
         exampleService.get().deleteAll();
     }
