@@ -49,26 +49,28 @@ public class KafkaClient {
     public String sendMessages(List<Example> examples){
         return examples.stream().map(example-> {
             try {
-                return new ObjectMapper().writeValueAsString(example);
-            } catch (JsonProcessingException e) {
+                String message = new ObjectMapper().writeValueAsString(example);
+                send(message, example.getValue());
+                return message;
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
-        }).peek(this::send).collect(Collectors.joining("\n"));
+        }).collect(Collectors.joining("\n"));
     }
 
     public String sendMessage(Example example) {
         try {
             String message = new ObjectMapper().writeValueAsString(example);
-            send(message);
+            send(message, example.getValue());
             return message;
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void send(String message){
-        new KafkaTemplate<>(producerFactory()).send(queueName, message).addCallback(new ListenableFutureCallback<SendResult<String, String>>(){
+    private void send(String message, int value){
+        new KafkaTemplate<>(producerFactory()).send(queueName, String.valueOf(value/10),  message).addCallback(new ListenableFutureCallback<SendResult<String, String>>(){
 
             @Override
             public void onSuccess(SendResult<String, String> result) {
