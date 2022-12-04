@@ -47,16 +47,7 @@ public class KafkaClient {
     private String responseWait;
 
     public String sendMessages(List<Example> examples){
-        return examples.stream().map(example-> {
-            try {
-                String message = new ObjectMapper().writeValueAsString(example);
-                send(message, example.getValue());
-                return message;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }).collect(Collectors.joining("\n"));
+        return examples.stream().map(this::sendMessage).collect(Collectors.joining("\n"));
     }
 
     public String sendMessage(Example example) {
@@ -88,7 +79,7 @@ public class KafkaClient {
     public void listener(String message){
         try {
             Example example = new ObjectMapper().readValue(message, Example.class);
-            System.out.println(example);
+            System.out.println("----------------------"+example);
             example.setState(ExampleState.UPDATED);
             ExampleHttpClient.sendRequest(example);
         }catch (Exception e){
