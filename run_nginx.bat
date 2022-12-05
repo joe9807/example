@@ -1,0 +1,1 @@
+call docker run -d --name joe-nginx -p 8080:8080 nginx

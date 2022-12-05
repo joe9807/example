@@ -1,0 +1,28 @@
+version: "3"
+services:
+    joe-activemq:
+        image: "webcenter/activemq"
+        ports:
+            - 61616:61616 
+            - 8161:8161
+    joe_postgres: 
+        image: "postgres:latest"
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "postgres"
+            POSTGRES_DB: "example"
+    joe_pgadmin:
+        image: "dpage/pgadmin4"
+        ports:
+            - 5051:80
+        environment:
+            PGADMIN_DEFAULT_USER: "postgres" 
+            PGADMIN_DEFAULT_PASSWORD: "postgres" 
+            PGADMIN_DEFAULT_EMAIL: "postgres@gmail.com"
+    joe-nginx:
+        image: "nginx"
+    joe_example:
+        image: "example:0.0.1"
+        

@@ -1,0 +1,1 @@
+start "Docker ActiveMQ" docker run --name joe-activemq -p 61616:61616 -p 8161:8161 webcenter/activemq

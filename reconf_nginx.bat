@@ -1,0 +1,1 @@
+docker cp C:\Users\joe\git\example\nginx.conf joe-nginx:/etc/nginx

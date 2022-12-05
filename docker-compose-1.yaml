@@ -1,0 +1,6 @@
+version: "3"
+services:
+    joe_example:
+        image: "example:0.0.1"
+        ports:
+            - 8080:8080

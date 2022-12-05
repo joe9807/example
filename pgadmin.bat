@@ -1,0 +1,1 @@
+start "PGAdmin" docker run --name joe-pgadmin -p 5051:80 -e "PGADMIN_DEFAULT_USER=postgres" -e "PGADMIN_DEFAULT_PASSWORD=postgres" -e "PGADMIN_DEFAULT_EMAIL=postgres@gmail.com" -d dpage/pgadmin4
