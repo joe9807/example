@@ -1,6 +1,5 @@
 package joe.example.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
@@ -8,6 +7,8 @@ import joe.example.utils.ExampleHttpClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,8 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,19 +56,20 @@ public class KafkaClient {
     public String sendMessage(Example example) {
         try {
             String message = new ObjectMapper().writeValueAsString(example);
-            send(message, example.getValue());
+            send(String.valueOf(example.getValue()/10), message);
             return message;
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void send(String message, int value){
-        new KafkaTemplate<>(producerFactory()).send(queueName, String.valueOf(value/10),  message).addCallback(new ListenableFutureCallback<SendResult<String, String>>(){
-
+    private void send(String key, String value){
+        ProducerRecord<String, String> record = new ProducerRecord<>(queueName, null, key, value
+                , Collections.singletonList(new RecordHeader("custom_header_key", "header key ".getBytes(StandardCharsets.UTF_8))));
+        new KafkaTemplate<>(producerFactory()).send(record).addCallback(new ListenableFutureCallback<SendResult<String, String>>(){
             @Override
             public void onSuccess(SendResult<String, String> result) {
-                System.out.println("message "+message+" successfully sent...");
+                System.out.println("message "+value+" successfully sent...");
             }
 
             @Override
