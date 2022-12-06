@@ -14,8 +14,8 @@ public class FeignController {
     private FeignClient feignClient;
 
     @Operation(summary = "Send Message from Feign Client")
-    @GetMapping("/send")
-    public String send() {
-        return feignClient.sendFeign();
+    @GetMapping("/sendNumber")
+    public String send(int number) {
+        return feignClient.sendNumber(number);
     }
 }

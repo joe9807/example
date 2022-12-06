@@ -27,7 +27,7 @@ public class KafkaController {
     }
 
     @Operation(summary = "Send Messages")
-    @Parameter(name="number", example="10" )
+    @Parameter(name="number", example="10")
     @PostMapping("/sendNumber")
     public String sendNumber(int number){
         return kafkaService.sendMessages(number);
