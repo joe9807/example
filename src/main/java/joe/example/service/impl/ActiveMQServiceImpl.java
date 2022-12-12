@@ -43,4 +43,9 @@ public class ActiveMQServiceImpl implements MQService {
     public void deleteAll() {
         repository.deleteAll();
     }
+
+    @Override
+    public String sendMessages(int number) {
+        return null;
+    }
 }

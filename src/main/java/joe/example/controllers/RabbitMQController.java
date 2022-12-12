@@ -2,8 +2,9 @@ package joe.example.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import joe.example.entity.Example;
-import joe.example.service.impl.RabbitMQServiceImpl;
+import joe.example.service.MQService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,9 +17,9 @@ import java.util.List;
 @RequestMapping("/rabbitmq")
 @RestController
 public class RabbitMQController {
-
     @Autowired
-    private RabbitMQServiceImpl rabbitMQService;
+    @Qualifier("rabbitMQServiceImpl")
+    private MQService rabbitMQService;
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")

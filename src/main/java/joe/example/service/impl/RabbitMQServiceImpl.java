@@ -30,6 +30,11 @@ public class RabbitMQServiceImpl implements MQService {
     }
 
     @Override
+    public String sendMessages(int number) {
+        return null;
+    }
+
+    @Override
     public List<Example> findAll() {
         return repository.findAll();
     }

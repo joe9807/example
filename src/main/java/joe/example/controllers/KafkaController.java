@@ -3,8 +3,9 @@ package joe.example.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import joe.example.entity.Example;
-import joe.example.service.impl.KafkaServiceImpl;
+import joe.example.service.MQService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,8 @@ import java.util.List;
 @RestController
 public class KafkaController {
     @Autowired
-    private KafkaServiceImpl kafkaService;
+    @Qualifier("kafkaServiceImpl")
+    private MQService kafkaService;
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")

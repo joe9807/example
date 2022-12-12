@@ -9,6 +9,8 @@ public interface MQService {
 
     String receiveMessage();
 
+    String sendMessages(int number);
+
     List<Example> findAll();
 
     Example saveExample(Example example);
