@@ -2,7 +2,7 @@ package joe.example.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import joe.example.entity.Example;
-import joe.example.service.RabbitMQService;
+import joe.example.service.impl.RabbitMQServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ import java.util.List;
 public class RabbitMQController {
 
     @Autowired
-    private RabbitMQService rabbitMQService;
+    private RabbitMQServiceImpl rabbitMQService;
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")

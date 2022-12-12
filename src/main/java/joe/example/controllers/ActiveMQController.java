@@ -2,7 +2,7 @@ package joe.example.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import joe.example.entity.Example;
-import joe.example.service.ActiveMQService;
+import joe.example.service.impl.ActiveMQServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 public class ActiveMQController {
     @Autowired
-    private Provider<ActiveMQService> exampleService;
+    private Provider<ActiveMQServiceImpl> exampleService;
 
     @Operation(summary = "Send Message")
     @GetMapping("/send")

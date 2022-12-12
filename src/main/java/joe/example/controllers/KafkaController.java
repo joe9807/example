@@ -3,7 +3,7 @@ package joe.example.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import joe.example.entity.Example;
-import joe.example.service.KafkaService;
+import joe.example.service.impl.KafkaServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 public class KafkaController {
     @Autowired
-    private KafkaService kafkaService;
+    private KafkaServiceImpl kafkaService;
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")

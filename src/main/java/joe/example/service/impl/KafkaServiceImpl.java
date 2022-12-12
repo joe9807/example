@@ -1,38 +1,55 @@
-package joe.example.service;
+package joe.example.service.impl;
 
 import joe.example.client.KafkaClient;
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
 import joe.example.repository.ExampleRepository;
+import joe.example.service.MQService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
-public class KafkaService extends GenericMQService{
+@RequiredArgsConstructor
+public class KafkaServiceImpl implements MQService {
     private final KafkaClient kafkaClient;
+    private final ExampleRepository repository;
 
     @Value("${kafka.callback.url}")
     private String callbackUrl;
 
-    @Inject
-    public KafkaService(KafkaClient kafkaClient, ExampleRepository repository) {
-        this.kafkaClient = kafkaClient;
-        this.repository = repository;
-    }
-
     public String sendMessage() {
         Example example = Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
-        return kafkaClient.sendMessage(saveExample(example));
+        return kafkaClient.sendMessage(repository.save(example));
+    }
+
+    @Override
+    public String receiveMessage() {
+        return null;
     }
 
     public String sendMessages(int number) {
         List<Example> examples = IntStream.range(0, number).mapToObj(unused->Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build())
-                .map(this::saveExample).collect(Collectors.toList());
+                .map(repository::save).collect(Collectors.toList());
         return kafkaClient.sendMessages(examples);
+    }
+
+    @Override
+    public List<Example> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Example saveExample(Example example) {
+        return repository.save(example);
+    }
+
+    @Override
+    public void deleteAll() {
+        repository.deleteAll();
     }
 }
