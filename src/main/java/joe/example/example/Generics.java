@@ -20,6 +20,7 @@ public class Generics <T0, T1 extends Number, T2, T3>{
     }
 
     public static void main(String[] args){
+        //test commit master
         Generics<String, Integer, Long, Object> generic = new Generics<>("zero value");
         String zeroValue = generic.getZeroValue();
         generic.setValue("");
