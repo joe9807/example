@@ -19,36 +19,36 @@ import java.util.List;
 @RestController
 public class KafkaController {
     @Autowired
-    @Qualifier("kafkaServiceImpl")
-    private MQService kafkaService;
+    //qualified by name here
+    private MQService kafkaServiceImpl;
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")
     public String send(){
-        return kafkaService.sendMessage();
+        return kafkaServiceImpl.sendMessage();
     }
 
     @Operation(summary = "Send Messages")
     @Parameter(name="number", example="10")
     @PostMapping("/sendNumber")
     public String sendNumber(int number){
-        return kafkaService.sendMessages(number);
+        return kafkaServiceImpl.sendMessages(number);
     }
 
     @Operation(summary = "List all Messages")
     @GetMapping("/list")
     public List<Example> list() {
-        return kafkaService.findAll();
+        return kafkaServiceImpl.findAll();
     }
 
     @Operation(summary = "Delete All Messages")
     @DeleteMapping("/delete")
     public void deleteAll() {
-        kafkaService.deleteAll();
+        kafkaServiceImpl.deleteAll();
     }
 
     @PostMapping("/callback")
     public Example callback(@RequestBody Example example) {
-        return kafkaService.saveExample(example);
+        return kafkaServiceImpl.saveExample(example);
     }
 }
