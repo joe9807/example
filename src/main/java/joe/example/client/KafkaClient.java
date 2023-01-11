@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
 import joe.example.utils.ExampleHttpClient;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -73,10 +74,16 @@ public class KafkaClient {
     }
 
     @KafkaListener(topics = "${kafka.queue.name}", groupId = "joe_group")
-    public void listener(String message){
+    public void listener(ConsumerRecord<String, String> record){
         try {
-            Example example = new ObjectMapper().readValue(message, Example.class);
-            System.out.println("----------------------"+example);
+            Example example = new ObjectMapper().readValue(record.value(), Example.class);
+            System.out.println("----------------------");
+            System.out.println("key: "+record.key());
+            System.out.println(example);
+            System.out.println(record.headers());
+            System.out.println("topic: "+record.topic());
+            System.out.println("partition: "+record.partition());
+            System.out.println("offset: "+record.offset());
             example.setState(ExampleState.UPDATED);
             ExampleHttpClient.sendRequest(example);
         }catch (Exception e){
