@@ -5,26 +5,21 @@ import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
 import joe.example.utils.ExampleHttpClient;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
-import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,14 +27,14 @@ import java.util.stream.Collectors;
 @PropertySource("classpath:application.properties")
 public class KafkaClient {
 
-    @Value("${kafka.message.broker.host}")
-    private String messageBrokerHost;
-
     @Value("${kafka.queue.name}")
     private String queueName;
 
     @Value("${response.wait}")
     private String responseWait;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     public String sendMessages(List<Example> examples){
         return examples.stream().map(this::sendMessage).collect(Collectors.joining("\n"));
@@ -58,7 +53,7 @@ public class KafkaClient {
     private void send(String key, String value){
         ProducerRecord<String, String> record = new ProducerRecord<>(queueName, null, key, value
                 , Collections.singletonList(new RecordHeader("custom_header_key", "header key ".getBytes(StandardCharsets.UTF_8))));
-        new KafkaTemplate<>(producerFactory()).send(record).addCallback(new ListenableFutureCallback<SendResult<String, String>>(){
+        kafkaTemplate.send(record).addCallback(new ListenableFutureCallback<SendResult<String, String>>(){
             @Override
             public void onSuccess(SendResult<String, String> result) {
                 System.out.println("message "+value+" successfully sent...");
@@ -87,13 +82,5 @@ public class KafkaClient {
         }catch (Exception e){
             throw new RuntimeException(e);
         }
-    }
-
-    public ProducerFactory<String, String> producerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, messageBrokerHost);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
     }
 }
