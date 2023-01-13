@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaUtils;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFutureCallback;
@@ -63,18 +64,29 @@ public class KafkaClient {
 
     @KafkaListener(topics = "${kafka.queue.name}", groupId = "joe_group")
     public void listener(ConsumerRecord<ExampleKey, Example> record){
-        try {
-            System.out.println("----------------------");
-            System.out.println("key: "+record.key());
-            System.out.println(record.value());
-            System.out.println(record.headers());
-            System.out.println("topic: "+record.topic());
-            System.out.println("partition: "+record.partition());
-            System.out.println("offset: "+record.offset());
-            record.value().setState(ExampleState.UPDATED);
-            ExampleHttpClient.sendRequest(record.value());
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
+        System.out.println("----------"+KafkaUtils.getConsumerGroupId()+"------------");
+        printRecord(record);
+        sendCallback(record);
+    }
+
+    @KafkaListener(topics = "${kafka.queue.name}", groupId = "joe_group1")
+    public void listener1(ConsumerRecord<ExampleKey, Example> record){
+        System.out.println("----------"+KafkaUtils.getConsumerGroupId()+"------------");
+        printRecord(record);
+        sendCallback(record);
+    }
+
+    private void printRecord(ConsumerRecord<ExampleKey, Example> record){
+        System.out.println("key: "+record.key());
+        System.out.println(record.value());
+        System.out.println(record.headers());
+        System.out.println("topic: "+record.topic());
+        System.out.println("partition: "+record.partition());
+        System.out.println("offset: "+record.offset());
+    }
+
+    private void sendCallback(ConsumerRecord<ExampleKey, Example> record){
+        record.value().setState(ExampleState.UPDATED);
+        ExampleHttpClient.sendRequest(record.value());
     }
 }
