@@ -1,6 +1,7 @@
 package joe.example.client;
 
 import joe.example.entity.Example;
+import joe.example.entity.ExampleKey;
 import joe.example.entity.ExampleState;
 import joe.example.utils.ExampleHttpClient;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -32,22 +33,24 @@ public class KafkaClient {
     private String responseWait;
 
     @Autowired
-    private KafkaTemplate<String, Example> kafkaTemplate;
+    private KafkaTemplate<ExampleKey, Example> kafkaTemplate;
 
     public void sendMessages(List<Example> examples){
         examples.forEach(this::sendMessage);
     }
 
     public void sendMessage(Example example) {
-        send(String.valueOf(example.getValue()/10), example);
+        send(example);
     }
 
-    private void send(String key, Example value){
-        ProducerRecord<String, Example> record = new ProducerRecord<>(queueName, null, key, value
-                , Collections.singletonList(new RecordHeader("custom_header_key", "header key ".getBytes(StandardCharsets.UTF_8))));
-        kafkaTemplate.send(record).addCallback(new ListenableFutureCallback<SendResult<String, Example>>(){
+    private ProducerRecord<ExampleKey, Example> getProducerRecord(Example example){
+        return new ProducerRecord<>(queueName, null, example.getKey("Kafka"), example, Collections.singletonList(new RecordHeader("custom_header_key", "header key ".getBytes(StandardCharsets.UTF_8))));
+    }
+
+    private void send(Example example){
+        kafkaTemplate.send(getProducerRecord(example)).addCallback(new ListenableFutureCallback<SendResult<ExampleKey, Example>>(){
             @Override
-            public void onSuccess(SendResult<String, Example> result) {
+            public void onSuccess(SendResult<ExampleKey, Example> result) {
                 System.out.println("message "+result.getProducerRecord().value()+" successfully sent...");
             }
 
@@ -59,17 +62,17 @@ public class KafkaClient {
     }
 
     @KafkaListener(topics = "${kafka.queue.name}", groupId = "joe_group")
-    public void listener(ConsumerRecord<String, String> record, Example example){
+    public void listener(ConsumerRecord<ExampleKey, Example> record){
         try {
             System.out.println("----------------------");
             System.out.println("key: "+record.key());
-            System.out.println(example);
+            System.out.println(record.value());
             System.out.println(record.headers());
             System.out.println("topic: "+record.topic());
             System.out.println("partition: "+record.partition());
             System.out.println("offset: "+record.offset());
-            example.setState(ExampleState.UPDATED);
-            ExampleHttpClient.sendRequest(example);
+            record.value().setState(ExampleState.UPDATED);
+            ExampleHttpClient.sendRequest(record.value());
         }catch (Exception e){
             throw new RuntimeException(e);
         }

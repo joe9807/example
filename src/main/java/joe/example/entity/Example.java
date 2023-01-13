@@ -1,5 +1,6 @@
 package joe.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,4 +31,9 @@ public class Example {
 
     @Transient
     private String callbackUrl;
+
+    @JsonIgnore
+    public ExampleKey getKey(String tag){
+        return new ExampleKey(value/10, tag);
+    }
 }
