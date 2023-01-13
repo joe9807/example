@@ -2,7 +2,6 @@ package joe.example.service.impl;
 
 import joe.example.client.ActiveMQClient;
 import joe.example.entity.Example;
-import joe.example.entity.ExampleState;
 import joe.example.repository.ExampleRepository;
 import joe.example.service.MQService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ public class ActiveMQServiceImpl implements MQService {
     private String callbackUrl;
 
     public Example sendMessage() {
-        Example example = Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
+        Example example = createExample(callbackUrl);
         activeMQClient.sendMessage(repository.save(example));
         return example;
     }

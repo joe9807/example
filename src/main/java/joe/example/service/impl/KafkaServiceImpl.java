@@ -2,7 +2,6 @@ package joe.example.service.impl;
 
 import joe.example.client.KafkaClient;
 import joe.example.entity.Example;
-import joe.example.entity.ExampleState;
 import joe.example.repository.ExampleRepository;
 import joe.example.service.MQService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class KafkaServiceImpl implements MQService {
     private String callbackUrl;
 
     public Example sendMessage() {
-        Example example = Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
+        Example example = createExample(callbackUrl);
         kafkaClient.sendMessage(repository.save(example));
         return example;
     }
@@ -34,8 +33,7 @@ public class KafkaServiceImpl implements MQService {
     }
 
     public List<Example> sendMessages(int number) {
-        List<Example> examples = IntStream.range(0, number).mapToObj(unused->Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build())
-                .map(repository::save).collect(Collectors.toList());
+        List<Example> examples = IntStream.range(0, number).mapToObj(unused->createExample(callbackUrl)).map(repository::save).collect(Collectors.toList());
         kafkaClient.sendMessages(examples);
         return examples;
     }
