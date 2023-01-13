@@ -1,6 +1,5 @@
 package joe.example.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
 import joe.example.utils.ExampleHttpClient;
@@ -40,11 +39,7 @@ public class KafkaClient {
     }
 
     public void sendMessage(Example example) {
-        try {
-            send(String.valueOf(example.getValue()/10), example);
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
+        send(String.valueOf(example.getValue()/10), example);
     }
 
     private void send(String key, Example value){
