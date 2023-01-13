@@ -22,9 +22,10 @@ public class KafkaServiceImpl implements MQService {
     @Value("${kafka.callback.url}")
     private String callbackUrl;
 
-    public String sendMessage() {
+    public Example sendMessage() {
         Example example = Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
-        return kafkaClient.sendMessage(repository.save(example));
+        kafkaClient.sendMessage(repository.save(example));
+        return example;
     }
 
     @Override
@@ -32,10 +33,11 @@ public class KafkaServiceImpl implements MQService {
         return null;
     }
 
-    public String sendMessages(int number) {
+    public List<Example> sendMessages(int number) {
         List<Example> examples = IntStream.range(0, number).mapToObj(unused->Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build())
                 .map(repository::save).collect(Collectors.toList());
-        return kafkaClient.sendMessages(examples);
+        kafkaClient.sendMessages(examples);
+        return examples;
     }
 
     @Override

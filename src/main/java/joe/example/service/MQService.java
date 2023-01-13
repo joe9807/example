@@ -5,11 +5,11 @@ import joe.example.entity.Example;
 import java.util.List;
 
 public interface MQService {
-    String sendMessage();
+    Example sendMessage();
 
     String receiveMessage();
 
-    String sendMessages(int number);
+    List<Example> sendMessages(int number);
 
     List<Example> findAll();
 

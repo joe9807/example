@@ -23,7 +23,7 @@ public class RabbitMQController {
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")
-    public String send(){
+    public Example send(){
         return rabbitMQService.sendMessage();
     }
 

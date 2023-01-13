@@ -23,7 +23,7 @@ public class ActiveMQController {
 
     @Operation(summary = "Send Message")
     @GetMapping("/send")
-    public String send() {
+    public Example send() {
         return exampleService.sendMessage();
     }
 

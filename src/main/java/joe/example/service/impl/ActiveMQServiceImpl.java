@@ -20,9 +20,10 @@ public class ActiveMQServiceImpl implements MQService {
     @Value("${rabbitmq.callback.url}")
     private String callbackUrl;
 
-    public String sendMessage() {
+    public Example sendMessage() {
         Example example = Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
-        return activeMQClient.sendMessage(repository.save(example));
+        activeMQClient.sendMessage(repository.save(example));
+        return example;
     }
 
     public String receiveMessage() {
@@ -45,7 +46,7 @@ public class ActiveMQServiceImpl implements MQService {
     }
 
     @Override
-    public String sendMessages(int number) {
+    public List<Example> sendMessages(int number) {
         return null;
     }
 }

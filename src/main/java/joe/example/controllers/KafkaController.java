@@ -23,14 +23,14 @@ public class KafkaController {
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")
-    public String send(){
+    public Example send(){
         return kafkaServiceImpl.sendMessage();
     }
 
     @Operation(summary = "Send Messages")
     @Parameter(name="number", example="10")
     @PostMapping("/sendNumber")
-    public String sendNumber(int number){
+    public List<Example> sendNumber(int number){
         return kafkaServiceImpl.sendMessages(number);
     }
 

@@ -20,7 +20,6 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @Configuration
@@ -34,29 +33,27 @@ public class KafkaClient {
     private String responseWait;
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, Example> kafkaTemplate;
 
-    public String sendMessages(List<Example> examples){
-        return examples.stream().map(this::sendMessage).collect(Collectors.joining("\n"));
+    public void sendMessages(List<Example> examples){
+        examples.forEach(this::sendMessage);
     }
 
-    public String sendMessage(Example example) {
+    public void sendMessage(Example example) {
         try {
-            String message = new ObjectMapper().writeValueAsString(example);
-            send(String.valueOf(example.getValue()/10), message);
-            return message;
+            send(String.valueOf(example.getValue()/10), example);
         } catch(Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void send(String key, String value){
-        ProducerRecord<String, String> record = new ProducerRecord<>(queueName, null, key, value
+    private void send(String key, Example value){
+        ProducerRecord<String, Example> record = new ProducerRecord<>(queueName, null, key, value
                 , Collections.singletonList(new RecordHeader("custom_header_key", "header key ".getBytes(StandardCharsets.UTF_8))));
-        kafkaTemplate.send(record).addCallback(new ListenableFutureCallback<SendResult<String, String>>(){
+        kafkaTemplate.send(record).addCallback(new ListenableFutureCallback<SendResult<String, Example>>(){
             @Override
-            public void onSuccess(SendResult<String, String> result) {
-                System.out.println("message "+value+" successfully sent...");
+            public void onSuccess(SendResult<String, Example> result) {
+                System.out.println("message "+result.getProducerRecord().value()+" successfully sent...");
             }
 
             @Override
@@ -67,9 +64,8 @@ public class KafkaClient {
     }
 
     @KafkaListener(topics = "${kafka.queue.name}", groupId = "joe_group")
-    public void listener(ConsumerRecord<String, String> record){
+    public void listener(ConsumerRecord<String, String> record, Example example){
         try {
-            Example example = new ObjectMapper().readValue(record.value(), Example.class);
             System.out.println("----------------------");
             System.out.println("key: "+record.key());
             System.out.println(example);
