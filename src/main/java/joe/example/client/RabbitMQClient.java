@@ -37,7 +37,7 @@ public class RabbitMQClient {
             queueDeclare(channel);
 
             String message = new ObjectMapper().writeValueAsString(example);
-            channel.basicPublish(queueName+"_exchange", "", null, message.getBytes(StandardCharsets.UTF_8));
+            channel.basicPublish(queueName+"_exchange", "test_routing_key", null, message.getBytes(StandardCharsets.UTF_8));
             return message;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -105,13 +105,13 @@ public class RabbitMQClient {
 
     private void queueDeclare(Channel channel) throws Exception{
         channel.exchangeDeclare(queueName+"_exchange", "direct");
-        channel.exchangeDeclare("__dlx__", "direct");
+        channel.exchangeDeclare("__dlx__", "fanout");
 
         Map<String, Object> args = new HashMap<>();
         args.put("x-dead-letter-exchange", "__dlx__");
         //args.put("x-message-ttl", 1000);
         channel.queueDeclare(queueName, false, false, false, args);
-        channel.queueBind(queueName, queueName+"_exchange", "");
+        channel.queueBind(queueName, queueName+"_exchange", "test_routing_key");
 
         channel.queueDeclare(queueNameDlx, false, false, false, new HashMap<>());
         channel.queueBind(queueNameDlx, "__dlx__", "");
