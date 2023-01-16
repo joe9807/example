@@ -1,0 +1,59 @@
+rabbitmq:
+  callback:
+    url: http://localhost:8889/rabbitmq/callback
+  enabled: true
+  message:
+    broker:
+      host: localhost
+  queue:
+    name: joe_queue
+activemq:
+  callback:
+    url: http://localhost:8889/activemq/callback
+  enabled: true
+  message:
+    broker:
+      url: tcp://localhost:61616
+  queue:
+    name: joe_queue
+kafka:
+  callback:
+    url: http://localhost:8889/kafka/callback
+  enabled: true
+  queue:
+    name: joe_topic
+feign:
+  client:
+    url: http://localhost:8889
+logging:
+  level:
+    org:
+      springframework:
+        transaction:
+          interceptor: TRACE
+response:
+  wait: Callback was sent...
+spring:
+  datasource:
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/example
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      key-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  sql:
+    init:
+      mode: always

@@ -6,7 +6,6 @@ import joe.example.entity.ExampleState;
 import joe.example.utils.ExampleHttpClient;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import javax.jms.Connection;
@@ -18,7 +17,6 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 @Component
-@PropertySource("classpath:application.properties")
 public class ActiveMQClient {
     @Value("${activemq.message.broker.url}")
     private String messageBrokerUrl;

@@ -5,6 +5,7 @@ import joe.example.entity.Example;
 import joe.example.service.MQService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RequestMapping("/rabbitmq")
 @RestController
+@ConditionalOnProperty(value = "rabbitmq.enabled", havingValue = "true")
 public class RabbitMQController {
     @Autowired
     @Qualifier("rabbitMQServiceImpl")
