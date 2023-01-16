@@ -7,6 +7,7 @@ rabbitmq:
       host: localhost
   queue:
     name: joe_queue
+    name_dlx: joe_queue_dlx
 activemq:
   callback:
     url: http://localhost:8889/activemq/callback

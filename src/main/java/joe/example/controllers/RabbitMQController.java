@@ -1,8 +1,10 @@
 package joe.example.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import joe.example.entity.Example;
 import joe.example.service.MQService;
+import joe.example.service.impl.RabbitMQServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,7 +23,7 @@ import java.util.List;
 public class RabbitMQController {
     @Autowired
     @Qualifier("rabbitMQServiceImpl")
-    private MQService rabbitMQService;
+    private RabbitMQServiceImpl rabbitMQService;
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")
@@ -30,9 +32,10 @@ public class RabbitMQController {
     }
 
     @Operation(summary = "Receive Message")
+    @Parameter(name="dlq", example="true")
     @GetMapping("/receive")
-    public String receive() {
-        return rabbitMQService.receiveMessage();
+    public String receive(boolean dlq) {
+        return rabbitMQService.receiveMessage(dlq);
     }
 
     @Operation(summary = "List all Messages")

@@ -25,8 +25,13 @@ public class RabbitMQServiceImpl implements MQService {
         return example;
     }
 
-    public String receiveMessage(){
-        return rabbitMQClient.receiveMessage();
+    public String receiveMessage(boolean dlq){
+        return rabbitMQClient.receiveMessage(dlq);
+    }
+
+    @Override
+    public String receiveMessage() {
+        return null;
     }
 
     @Override
