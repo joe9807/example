@@ -18,6 +18,10 @@ public interface MQService {
 
     void deleteAll();
 
+    default String receiveMessage(boolean dlq){
+        return null;
+    }
+
     default Example createExample(String callbackUrl){
         return Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
     }

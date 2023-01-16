@@ -23,7 +23,7 @@ import java.util.List;
 public class RabbitMQController {
     @Autowired
     @Qualifier("rabbitMQServiceImpl")
-    private RabbitMQServiceImpl rabbitMQService;
+    private MQService rabbitMQService;
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")
