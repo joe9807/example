@@ -44,36 +44,53 @@ public class RabbitMQClient {
     }
 
     public String receiveMessage(boolean dlq){
-        try {
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost(messageBrokerHost);
-            Connection connection = factory.newConnection();
-            Channel channel = connection.createChannel();
+        return dlq?dlqMessage():regularMessage();
+    }
 
+    private String regularMessage(){
+        try {
+            Channel channel = getChannel();
             queueDeclare(channel);
 
-            String qn = dlq?queueNameDlx:queueName;
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                Example example = new ObjectMapper().readValue(message, Example.class);
+                Example example = new ObjectMapper().readValue(new String(delivery.getBody(), StandardCharsets.UTF_8), Example.class);
 
-                System.out.println("Message has been received: " + example + " from " + qn);
-                if (!dlq) {
-                    channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, false);
-                }
-                //if (true) throw new RuntimeException("11");
-                example.setState(ExampleState.UPDATED);
-                ExampleHttpClient.sendRequest(example);
+                System.out.println("Message has been received: " + example + " from " + queueNameDlx);
+                channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, false);
             };
-            //if true then only one consumer will fail. otherwise all consumers will fail
-            //so if consumer fails before ack message then rabbitmq returns message to the queue
-            //and that message will receive another consumer
-            channel.basicConsume(qn, false, deliverCallback, consumerTag -> { });
+            channel.basicConsume(queueName, false, deliverCallback, consumerTag -> { });
 
-            return "Consumer has started";
+            return "Consumer for regular queue has started";
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String dlqMessage(){
+        try {
+            Channel channel = getChannel();
+            queueDeclare(channel);
+
+            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+                Example example = new ObjectMapper().readValue(new String(delivery.getBody(), StandardCharsets.UTF_8), Example.class);
+
+                System.out.println("Message has been received: " + example + " from " + queueName);
+                example.setState(ExampleState.UPDATED);
+                ExampleHttpClient.sendRequest(example);
+            };
+            channel.basicConsume(queueNameDlx, false, deliverCallback, consumerTag -> { });
+
+            return "Consumer for "+ queueNameDlx+ " queue has started";
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Channel getChannel() throws Exception {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost(messageBrokerHost);
+        Connection connection = factory.newConnection();
+        return connection.createChannel();
     }
 
     private void queueDeclare(Channel channel) throws Exception{
