@@ -5,6 +5,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.Delivery;
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
 import joe.example.utils.ExampleHttpClient;
@@ -53,9 +54,7 @@ public class RabbitMQClient {
             queueDeclare(channel);
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                Example example = new ObjectMapper().readValue(new String(delivery.getBody(), StandardCharsets.UTF_8), Example.class);
-
-                System.out.println("Message has been received: " + example + " from " + queueNameDlx);
+                Example example = printMessage(delivery, queueName);
                 channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, false);
             };
             channel.basicConsume(queueName, false, deliverCallback, consumerTag -> { });
@@ -72,9 +71,7 @@ public class RabbitMQClient {
             queueDeclare(channel);
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                Example example = new ObjectMapper().readValue(new String(delivery.getBody(), StandardCharsets.UTF_8), Example.class);
-
-                System.out.println("Message has been received: " + example + " from " + queueName);
+                Example example = printMessage(delivery, queueNameDlx);
                 example.setState(ExampleState.UPDATED);
                 ExampleHttpClient.sendRequest(example);
             };
@@ -84,6 +81,19 @@ public class RabbitMQClient {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Example printMessage(Delivery delivery, String queueName) {
+        Example example = null;
+        try {
+            example = new ObjectMapper().readValue(new String(delivery.getBody(), StandardCharsets.UTF_8), Example.class);
+
+            System.out.println(delivery.getEnvelope().getRoutingKey() + "; " + delivery.getEnvelope().getExchange() + "; Message has been received: " + example + " from " + queueName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return example;
     }
 
     private Channel getChannel() throws Exception {
