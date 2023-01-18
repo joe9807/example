@@ -12,6 +12,8 @@ import joe.example.utils.ExampleHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,16 @@ public class RabbitMQClient {
 
     @Value("${response.wait}")
     private String responseWait;
+
+    @PostConstruct
+    public void init(){
+        System.out.println(this.getClass().getName()+" bean initialized");
+    }
+
+    @PreDestroy
+    public void destroy(){
+        System.out.println(this.getClass().getName()+" bean destroyed");
+    }
 
     public String sendMessage(Example example) {
         ConnectionFactory factory = new ConnectionFactory();
@@ -54,7 +66,7 @@ public class RabbitMQClient {
             queueDeclare(channel);
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                Example example = printMessage(delivery, queueName);
+                printMessage(consumerTag, delivery, queueName);
                 channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, false);
             };
             channel.basicConsume(queueName, false, deliverCallback, consumerTag -> { });
@@ -71,7 +83,7 @@ public class RabbitMQClient {
             queueDeclare(channel);
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                Example example = printMessage(delivery, queueNameDlx);
+                Example example = printMessage(consumerTag, delivery, queueNameDlx);
                 example.setState(ExampleState.UPDATED);
                 ExampleHttpClient.sendRequest(example);
             };
@@ -83,12 +95,13 @@ public class RabbitMQClient {
         }
     }
 
-    private Example printMessage(Delivery delivery, String queueName) {
+    private Example printMessage(String consumerTag, Delivery delivery, String queueName) {
         Example example = null;
         try {
             example = new ObjectMapper().readValue(new String(delivery.getBody(), StandardCharsets.UTF_8), Example.class);
 
-            System.out.println(delivery.getEnvelope().getRoutingKey() + "; " + delivery.getEnvelope().getExchange() + "; Message has been received: " + example + " from " + queueName);
+            System.out.println(consumerTag+"; "+delivery.getEnvelope().getRoutingKey() + "; " + delivery.getEnvelope().getExchange()
+                    + "; Message has been received: " + example + " from " + queueName);
         } catch (Exception e) {
             e.printStackTrace();
         }
