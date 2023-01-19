@@ -11,6 +11,9 @@ import joe.example.entity.ExampleState;
 import joe.example.utils.ExampleHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -42,7 +45,10 @@ public class RabbitMQClient {
         System.out.println(this.getClass().getName()+" bean destroyed");
     }
 
+    @Transactional
     public String sendMessage(Example example) {
+        System.out.println("client: Current transaction name: "+ TransactionSynchronizationManager.getCurrentTransactionName());
+
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost(messageBrokerHost);
         try (Connection connection = factory.newConnection(); Channel channel = connection.createChannel()) {
