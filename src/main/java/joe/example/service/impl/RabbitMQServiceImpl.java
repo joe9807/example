@@ -7,7 +7,6 @@ import joe.example.service.MQService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class RabbitMQServiceImpl implements MQService {
     private String callbackUrl;
 
     public Example sendMessage(){
-        System.out.println("Current transaction name: "+ TransactionSynchronizationManager.getCurrentTransactionName());
         Example example = createExample(callbackUrl);
         rabbitMQClient.sendMessage(repository.save(example));
         return example;
