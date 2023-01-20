@@ -10,6 +10,7 @@ public class TransactionsClient {
     @Transactional
     public String client(){
         System.out.println("client: Current transaction name: "+ TransactionSynchronizationManager.getCurrentTransactionName());
+        if (true) throw new RuntimeException("Test Exception");
         return "client";
     }
 }

@@ -7,15 +7,19 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Service
+@Transactional
 public class TransactionsService {
     @Autowired
     private TransactionsClient client;
 
-    @Transactional
     public String method1(){
         System.out.println("method1: Current transaction name: "+ TransactionSynchronizationManager.getCurrentTransactionName());
         String result = method2();
-        client.client();
+        try {
+            client.client();
+        } catch (Exception e) {
+            System.out.println("Test Exception");
+        }
         return result;
     }
 
