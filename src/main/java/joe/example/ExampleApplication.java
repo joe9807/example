@@ -1,8 +1,10 @@
 package joe.example;
 
+import joe.example.bpp.JoeBeanPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
@@ -12,7 +14,11 @@ public class ExampleApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ExampleApplication.class, args);
-		//test comment
+	}
+
+	@Bean
+	public JoeBeanPostProcessor joeBeanPostProcessor(){
+		return new JoeBeanPostProcessor();
 	}
 
 }

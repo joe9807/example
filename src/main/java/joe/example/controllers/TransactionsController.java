@@ -18,4 +18,10 @@ public class TransactionsController {
     public String transaction(){
         return transactionsService.method1();
     }
+
+    @Operation(summary = "Get Compressed Value")
+    @GetMapping("value")
+    public String value(){
+        return transactionsService.getValue();
+    }
 }

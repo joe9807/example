@@ -27,4 +27,8 @@ public class TransactionsService {
         System.out.println("method2: Current transaction name: "+ TransactionSynchronizationManager.getCurrentTransactionName());
         return "method2";
     }
+
+    public String getValue(){
+        return client.getValue();
+    }
 }
