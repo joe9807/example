@@ -24,4 +24,10 @@ public class TransactionsController {
     public String value(){
         return transactionsService.getValue();
     }
+
+    @Operation(summary = "Get Bean Names")
+    @GetMapping("beans")
+    public String beans(){
+        return transactionsService.getBeanDefinitionNames();
+    }
 }
