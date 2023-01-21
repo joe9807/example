@@ -11,7 +11,7 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 public class JoeBeanPostProcessor implements BeanPostProcessor {
-    private Map<String, Object> joeBeans = new HashMap<>();
+    private final Map<String, Object> joeBeans = new HashMap<>();
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         for (Field field: bean.getClass().getDeclaredFields()){
