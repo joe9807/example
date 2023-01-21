@@ -5,15 +5,19 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.IntStream;
 
 public class JoeBeanPostProcessor implements BeanPostProcessor {
+    private Map<String, Object> joeBeans = new HashMap<>();
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         for (Field field: bean.getClass().getDeclaredFields()){
             if (field.isAnnotationPresent(JoeAnnotation.class)) {
                 generateValue(bean, field);
+                joeBeans.put(beanName, bean);
             }
         }
 
@@ -39,17 +43,17 @@ public class JoeBeanPostProcessor implements BeanPostProcessor {
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (bean.getClass().getName().contains("TransactionsClient")){
-            System.out.println("sdfdg");
-        }
-        for (Field field: bean.getClass().getDeclaredFields()){
-            if (field.isAnnotationPresent(JoeAnnotation.class)) {
-                try {
-                    field.setAccessible(true);
-                    String value = (String) field.get(bean);
-                    field.set(bean, getCompressedValue(value));
-                } catch (Exception e){
-                    e.printStackTrace();
+        Object beforeBean = joeBeans.get(beanName);
+        if (beforeBean != null){
+            for (Field field: beforeBean.getClass().getDeclaredFields()){
+                if (field.isAnnotationPresent(JoeAnnotation.class)) {
+                    try {
+                        field.setAccessible(true);
+                        String value = (String) field.get(beforeBean);
+                        field.set(beforeBean, getCompressedValue(value));
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
         }
