@@ -6,6 +6,7 @@ import joe.example.repository.ExampleRepository;
 import joe.example.service.MQService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(value = "kafka.enabled", havingValue = "true")
 public class KafkaServiceImpl implements MQService {
     private final KafkaClient kafkaClient;
     private final ExampleRepository repository;

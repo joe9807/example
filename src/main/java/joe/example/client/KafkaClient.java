@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaUtils;
@@ -21,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
+@ConditionalOnProperty(value = "kafka.enabled", havingValue = "true")
 public class KafkaClient {
 
     @Value("${kafka.queue.name}")
