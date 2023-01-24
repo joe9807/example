@@ -2,7 +2,7 @@ package joe.example.utils;
 
 import java.io.IOException;
 
-public class ClassParent {
+public abstract class ClassParent {
     protected void parentMethod() throws IOException {
 
     }
