@@ -21,6 +21,6 @@ public class FeignController {
     @Parameter(name="number", example="10")
     @GetMapping("/sendNumber")
     public List<Example> sendNumber(int number) {
-        return feignClient.sendNumber(number);
+        return feignClient.sendNumberAnotherName(number);
     }
 }

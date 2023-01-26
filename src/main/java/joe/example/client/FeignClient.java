@@ -9,5 +9,5 @@ import java.util.List;
 @org.springframework.cloud.openfeign.FeignClient(name="kafka", url="${feign.client.url}", path="/kafka")
 public interface FeignClient {
     @PostMapping("/sendNumber")
-    List<Example> sendNumber(@RequestParam(value="number") int number);
+    List<Example> sendNumberAnotherName(@RequestParam(value="number") int number);
 }
