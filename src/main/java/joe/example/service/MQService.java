@@ -2,19 +2,19 @@ package joe.example.service;
 
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface MQService {
-    Example sendMessage();
+    Mono<Example> sendMessage();
 
     String receiveMessage();
 
-    List<Example> sendMessages(int number);
+    Flux<Example> sendMessages(int number);
 
-    List<Example> findAll();
+    Flux<Example> findAll();
 
-    Example saveExample(Example example);
+    Mono<Example> saveExample(Example example);
 
     void deleteAll();
 
@@ -23,6 +23,6 @@ public interface MQService {
     }
 
     default Example createExample(String callbackUrl){
-        return Example.builder().value((int) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
+        return Example.builder().value((long) (Math.random() * 100)).state(ExampleState.CREATED).callbackUrl(callbackUrl).build();
     }
 }

@@ -15,11 +15,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.KafkaUtils;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
-import org.springframework.util.concurrent.ListenableFutureCallback;
+import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.List;
 
 @Component
 @ConditionalOnProperty(value = "kafka.enabled", havingValue = "true")
@@ -34,30 +33,27 @@ public class KafkaClient {
     @Autowired
     private KafkaTemplate<ExampleKey, Example> kafkaTemplate;
 
-    public void sendMessages(List<Example> examples){
-        examples.forEach(this::sendMessage);
-    }
-
-    public void sendMessage(Example example) {
-        send(example);
+    public Mono<Example> sendMessage(Example example) {
+        return send(example).map(exampleKeyExampleSendResult -> exampleKeyExampleSendResult.getProducerRecord().value());
     }
 
     private ProducerRecord<ExampleKey, Example> getProducerRecord(Example example){
         return new ProducerRecord<>(queueName, null, example.getKey("Kafka"), example, Collections.singletonList(new RecordHeader("custom_header_key", "header key ".getBytes(StandardCharsets.UTF_8))));
     }
 
-    private void send(Example example){
-        kafkaTemplate.send(getProducerRecord(example)).addCallback(new ListenableFutureCallback<SendResult<ExampleKey, Example>>(){
-            @Override
-            public void onSuccess(SendResult<ExampleKey, Example> result) {
-                System.out.println("message "+result.getProducerRecord().value()+" successfully sent...");
-            }
-
-            @Override
-            public void onFailure(Throwable ex) {
-                System.out.println("exception during message sending "+ ex.getMessage());
-            }
-        });
+    private Mono<SendResult<ExampleKey, Example>> send(Example example){
+        return Mono.fromFuture(kafkaTemplate.send(getProducerRecord(example)));
+//        kafkaTemplate.send(getProducerRecord(example)).addCallback(new ListenableFutureCallback<SendResult<ExampleKey, Example>>(){
+//            @Override
+//            public void onSuccess(SendResult<ExampleKey, Example> result) {
+//                System.out.println("message "+result.getProducerRecord().value()+" successfully sent...");
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable ex) {
+//                System.out.println("exception during message sending "+ ex.getMessage());
+//            }
+//        });
     }
 
     @KafkaListener(topics = "${kafka.queue.name}", groupId = "joe_group")

@@ -1,5 +1,6 @@
 package joe.example.client;
 
+import jakarta.annotation.PostConstruct;
 import joe.example.annotation.JoeAnnotation;
 import joe.example.entity.Transactions;
 import joe.example.repository.TransactionRepository;
@@ -10,7 +11,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
 @Component

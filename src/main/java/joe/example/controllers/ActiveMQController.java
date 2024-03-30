@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RequestMapping("/activemq")
 @RestController
@@ -25,7 +25,7 @@ public class ActiveMQController {
 
     @Operation(summary = "Send Message")
     @GetMapping("/send")
-    public Example send() {
+    public Mono<Example> send() {
         return exampleService.sendMessage();
     }
 
@@ -37,7 +37,7 @@ public class ActiveMQController {
 
     @Operation(summary = "List all Messages")
     @GetMapping("/list")
-    public List<Example> list() {
+    public Flux<Example> list() {
         return exampleService.findAll();
     }
 
@@ -48,7 +48,7 @@ public class ActiveMQController {
     }
 
     @PostMapping("/callback")
-    public Example callback(@RequestBody Example example) {
+    public Mono<Example> callback(@RequestBody Example example) {
         return exampleService.saveExample(example);
     }
 }

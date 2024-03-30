@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RequestMapping("/kafka")
 @RestController
@@ -25,20 +25,20 @@ public class KafkaController {
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")
-    public Example send(){
+    public Mono<Example> send(){
         return kafkaServiceImpl.sendMessage();
     }
 
     @Operation(summary = "Send Messages")
     @Parameter(name="number", example="10")
     @PostMapping("/sendNumber")
-    public List<Example> sendNumber(int number){
+    public Flux<Example> sendNumber(int number){
         return kafkaServiceImpl.sendMessages(number);
     }
 
     @Operation(summary = "List all Messages")
     @GetMapping("/list")
-    public List<Example> list() {
+    public Flux<Example> list() {
         return kafkaServiceImpl.findAll();
     }
 
@@ -49,7 +49,7 @@ public class KafkaController {
     }
 
     @PostMapping("/callback")
-    public Example callback(@RequestBody Example example) {
+    public Mono<Example> callback(@RequestBody Example example) {
         return kafkaServiceImpl.saveExample(example);
     }
 }

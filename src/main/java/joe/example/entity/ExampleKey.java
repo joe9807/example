@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExampleKey {
-    private int key;
+    private Long key;
     private String tag;
 }

@@ -7,8 +7,9 @@ import joe.example.service.MQService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -23,10 +24,8 @@ public class KafkaServiceImpl implements MQService {
     @Value("${kafka.callback.url}")
     private String callbackUrl;
 
-    public Example sendMessage() {
-        Example example = createExample(callbackUrl);
-        kafkaClient.sendMessage(repository.save(example));
-        return example;
+    public Mono<Example> sendMessage() {
+        return repository.save(createExample(callbackUrl)).doOnNext(kafkaClient::sendMessage);
     }
 
     @Override
@@ -34,19 +33,18 @@ public class KafkaServiceImpl implements MQService {
         return null;
     }
 
-    public List<Example> sendMessages(int number) {
-        List<Example> examples = IntStream.range(0, number).mapToObj(unused->createExample(callbackUrl)).map(repository::save).collect(Collectors.toList());
-        kafkaClient.sendMessages(examples);
-        return examples;
+    public Flux<Example> sendMessages(int number) {
+        return Flux.concat(IntStream.range(0, number).mapToObj(unused->createExample(callbackUrl)).map(repository::save).collect(Collectors.toList()))
+                .doOnNext(kafkaClient::sendMessage);
     }
 
     @Override
-    public List<Example> findAll() {
+    public Flux<Example> findAll() {
         return repository.findAll();
     }
 
     @Override
-    public Example saveExample(Example example) {
+    public Mono<Example> saveExample(Example example) {
         return repository.save(example);
     }
 

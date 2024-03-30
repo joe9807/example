@@ -7,8 +7,8 @@ import joe.example.service.MQService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -19,10 +19,9 @@ public class RabbitMQServiceImpl implements MQService {
     @Value("${rabbitmq.callback.url}")
     private String callbackUrl;
 
-    public Example sendMessage(){
-        Example example = createExample(callbackUrl);
-        rabbitMQClient.sendMessage(repository.save(example));
-        return example;
+    public Mono<Example> sendMessage(){
+        //return repository.save(createExample(callbackUrl)).doOnNext(example-> repository.findById(example.getId())).doOnNext(rabbitMQClient::sendMessage);
+        return repository.save(createExample(callbackUrl)).doOnNext(rabbitMQClient::sendMessage);
     }
 
     public String receiveMessage(boolean dlq){
@@ -35,17 +34,17 @@ public class RabbitMQServiceImpl implements MQService {
     }
 
     @Override
-    public List<Example> sendMessages(int number) {
+    public Flux<Example> sendMessages(int number) {
         return null;
     }
 
     @Override
-    public List<Example> findAll() {
+    public Flux<Example> findAll() {
         return repository.findAll();
     }
 
     @Override
-    public Example saveExample(Example example) {
+    public Mono<Example> saveExample(Example example) {
         return repository.save(example);
     }
 

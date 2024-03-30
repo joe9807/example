@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import joe.example.entity.Example;
 import joe.example.service.MQService;
-import joe.example.service.impl.RabbitMQServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RequestMapping("/rabbitmq")
 @RestController
@@ -27,7 +26,7 @@ public class RabbitMQController {
 
     @Operation(summary = "Send Message")
     @PostMapping("/send")
-    public Example send(){
+    public Mono<Example> send(){
         return rabbitMQService.sendMessage();
     }
 
@@ -40,7 +39,7 @@ public class RabbitMQController {
 
     @Operation(summary = "List all Messages")
     @GetMapping("/list")
-    public List<Example> list() {
+    public Flux<Example> list() {
         return rabbitMQService.findAll();
     }
 
@@ -51,7 +50,7 @@ public class RabbitMQController {
     }
 
     @PostMapping("/callback")
-    public Example callback(@RequestBody Example example) {
+    public Mono<Example> callback(@RequestBody Example example) {
         return rabbitMQService.saveExample(example);
     }
 }

@@ -6,14 +6,14 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Delivery;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import joe.example.entity.Example;
 import joe.example.entity.ExampleState;
 import joe.example.utils.ExampleHttpClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +87,7 @@ public class RabbitMQClient {
                 example.setState(ExampleState.UPDATED);
                 ExampleHttpClient.sendRequest(example);
             };
-            channel.basicConsume(queueNameDlx, false, deliverCallback, consumerTag -> { });
+            channel.basicConsume(queueNameDlx, true, deliverCallback, consumerTag -> { });
 
             return "Consumer for "+ queueNameDlx+ " queue has started";
         } catch (Exception e) {
