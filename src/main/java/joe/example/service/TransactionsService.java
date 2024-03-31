@@ -12,7 +12,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 @Service
 @Transactional
@@ -49,7 +48,7 @@ public class TransactionsService {
         return client.getValue();
     }
 
-    public Flux<String> getBeanDefinitionNames(){
-        return Flux.just(String.join("\n", applicationContext.getBeanDefinitionNames()));
+    public Flux<Object> getBeanDefinitionNames(){
+        return Flux.fromArray(applicationContext.getBeanDefinitionNames());
     }
 }

@@ -10,6 +10,5 @@ public class JoeBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
         String beanNames = String.join("\n", configurableListableBeanFactory.getBeanDefinitionNames());
-        System.out.println(beanNames);
     }
 }

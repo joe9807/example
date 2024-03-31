@@ -28,7 +28,7 @@ public class TransactionsController {
 
     @Operation(summary = "Get Bean Names")
     @GetMapping("beans")
-    public Flux<String> beans(){
-        return transactionsService.getBeanDefinitionNames().doOnNext(System.out::print);
+    public Flux<Object> beans(){
+        return transactionsService.getBeanDefinitionNames().doOnNext(System.out::println);
     }
 }
