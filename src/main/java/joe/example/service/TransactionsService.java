@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Service
 @Transactional
@@ -47,7 +49,7 @@ public class TransactionsService {
         return client.getValue();
     }
 
-    public String getBeanDefinitionNames(){
-        return String.join("\n", applicationContext.getBeanDefinitionNames());
+    public Flux<String> getBeanDefinitionNames(){
+        return Flux.just(String.join("\n", applicationContext.getBeanDefinitionNames()));
     }
 }
