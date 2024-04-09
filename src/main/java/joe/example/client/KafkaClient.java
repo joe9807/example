@@ -4,10 +4,10 @@ import joe.example.entity.Example;
 import joe.example.entity.ExampleKey;
 import joe.example.entity.ExampleState;
 import joe.example.utils.ExampleHttpClient;
+import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -22,6 +22,7 @@ import java.util.Collections;
 
 @Component
 @ConditionalOnProperty(value = "kafka.enabled", havingValue = "true")
+@RequiredArgsConstructor
 public class KafkaClient {
 
     @Value("${kafka.queue.name}")
@@ -30,8 +31,7 @@ public class KafkaClient {
     @Value("${response.wait}")
     private String responseWait;
 
-    @Autowired
-    private KafkaTemplate<ExampleKey, Example> kafkaTemplate;
+    private final KafkaTemplate<ExampleKey, Example> kafkaTemplate;
 
     public Mono<Example> sendMessage(Example example) {
         return send(example).map(exampleKeyExampleSendResult -> exampleKeyExampleSendResult.getProducerRecord().value());
@@ -43,17 +43,6 @@ public class KafkaClient {
 
     private Mono<SendResult<ExampleKey, Example>> send(Example example){
         return Mono.fromFuture(kafkaTemplate.send(getProducerRecord(example)));
-//        kafkaTemplate.send(getProducerRecord(example)).addCallback(new ListenableFutureCallback<SendResult<ExampleKey, Example>>(){
-//            @Override
-//            public void onSuccess(SendResult<ExampleKey, Example> result) {
-//                System.out.println("message "+result.getProducerRecord().value()+" successfully sent...");
-//            }
-//
-//            @Override
-//            public void onFailure(Throwable ex) {
-//                System.out.println("exception during message sending "+ ex.getMessage());
-//            }
-//        });
     }
 
     @KafkaListener(topics = "${kafka.queue.name}", groupId = "joe_group")
