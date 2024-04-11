@@ -22,7 +22,7 @@ activemq:
 kafka:
   callback:
     url: http://${SERVER_HOST:localhost}:${SERVER_PORT}/kafka/callback
-  enabled: true
+  enabled: ${KAFKA_ENABLED:true}
   queue:
     name: joe_topic
 feign:

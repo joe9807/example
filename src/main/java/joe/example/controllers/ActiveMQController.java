@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 @RequestMapping("/activemq")
 @RestController
 @ConditionalOnProperty(value = "activemq.enabled", havingValue = "true")
@@ -38,7 +40,7 @@ public class ActiveMQController {
     @Operation(summary = "List all Messages")
     @GetMapping("/list")
     public Flux<Example> list() {
-        return exampleService.findAll();
+        return exampleService.findAll().delayElements(Duration.ofSeconds(2));
     }
 
     @Operation(summary = "Delete All Messages")
