@@ -1,33 +1,33 @@
 server:
-  port: ${SERVER_PORT}
+  port: ${SERVER_PORT:localhost}
 rabbitmq:
   callback:
-    url: http://${SERVER_HOST}:${SERVER_PORT}/rabbitmq/callback
+    url: http://${SERVER_HOST:localhost}:${SERVER_PORT}/rabbitmq/callback
   enabled: true
   message:
     broker:
-      host: ${SERVER_HOST}
+      host: ${SERVER_HOST:localhost}
   queue:
     name: joe_queue
     name_dlx: joe_queue_dlx
 activemq:
   callback:
-    url: http://${SERVER_HOST}:${SERVER_PORT}/activemq/callback
+    url: http://${SERVER_HOST:localhost}:${SERVER_PORT}/activemq/callback
   enabled: true
   message:
     broker:
-      url: tcp://${SERVER_HOST}:61616
+      url: tcp://${SERVER_HOST:localhost}:61616
   queue:
     name: joe_queue
 kafka:
   callback:
-    url: http://${SERVER_HOST}:${SERVER_PORT}/kafka/callback
+    url: http://${SERVER_HOST:localhost}:${SERVER_PORT}/kafka/callback
   enabled: true
   queue:
     name: joe_topic
 feign:
   client:
-    url: http://${SERVER_HOST}:${SERVER_PORT}
+    url: http://${SERVER_HOST:localhost}:${SERVER_PORT}
 response:
   wait: Callback was sent...
 spring:
@@ -37,13 +37,13 @@ spring:
         enabled: true
   r2dbc:
     password: postgres
-    url: r2dbc:postgresql://${SERVER_HOST}:5432/example
+    url: r2dbc:postgresql://${SERVER_HOST:localhost}:5432/example
     username: postgres
   jpa:
     hibernate:
       ddl-auto: none
   kafka:
-    bootstrap-servers: ${SERVER_HOST}:9092
+    bootstrap-servers: ${SERVER_HOST:localhost}:9092
     consumer:
       key-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
