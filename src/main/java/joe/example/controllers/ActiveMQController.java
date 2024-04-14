@@ -6,6 +6,7 @@ import joe.example.service.MQService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +39,7 @@ public class ActiveMQController {
     }
 
     @Operation(summary = "List all Messages")
-    @GetMapping("/list")
+    @GetMapping(value="/list", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Example> list() {
         return exampleService.findAll().delayElements(Duration.ofSeconds(2));
     }

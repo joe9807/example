@@ -31,6 +31,12 @@ feign:
 response:
   wait: Callback was sent...
 spring:
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
   data:
     r2dbc:
       repositories:
