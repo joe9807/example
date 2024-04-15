@@ -39,7 +39,7 @@ public class ActiveMQController {
     }
 
     @Operation(summary = "List all Messages")
-    @GetMapping(value="/list", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value="/list")
     public Flux<Example> list() {
         return exampleService.findAll().delayElements(Duration.ofSeconds(2));
     }
