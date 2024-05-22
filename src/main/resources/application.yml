@@ -49,7 +49,13 @@ spring:
     hibernate:
       ddl-auto: none
   kafka:
-    bootstrap-servers: ${SERVER_HOST:localhost}:9092
+    streams:
+      application-id: example_id
+      properties:
+        default.key.serde: joe.example.serdes.ExampleKeySerde
+        default.value.serde: joe.example.serdes.ExampleValueSerde
+        auto.offset.reset: earliest
+    bootstrap-servers: ${KAFKA_HOST:localhost}:9092
     consumer:
       key-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
