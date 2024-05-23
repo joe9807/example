@@ -45,8 +45,8 @@ public class RabbitMQController {
 
     @Operation(summary = "Delete All Messages")
     @DeleteMapping("/delete")
-    public void deleteAll() {
-        rabbitMQService.deleteAll();
+    public Mono<Void> deleteAll() {
+        return rabbitMQService.deleteAll();
     }
 
     @PostMapping("/callback")

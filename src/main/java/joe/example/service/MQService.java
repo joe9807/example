@@ -16,7 +16,7 @@ public interface MQService {
 
     Mono<Example> saveExample(Example example);
 
-    void deleteAll();
+    Mono<Void> deleteAll();
 
     default String receiveMessage(boolean dlq){
         return null;

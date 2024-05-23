@@ -44,8 +44,8 @@ public class KafkaController {
 
     @Operation(summary = "Delete All Messages")
     @DeleteMapping("/delete")
-    public void deleteAll() {
-        kafkaServiceImpl.deleteAll();
+    public Mono<Void> deleteAll() {
+        return kafkaServiceImpl.deleteAll();
     }
 
     @PostMapping("/callback")

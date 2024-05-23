@@ -49,7 +49,7 @@ public class RabbitMQServiceImpl implements MQService {
     }
 
     @Override
-    public void deleteAll() {
-        repository.deleteAll();
+    public Mono<Void> deleteAll() {
+        return repository.deleteAll();
     }
 }
