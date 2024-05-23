@@ -16,7 +16,7 @@ public class ActiveMQServiceImpl implements MQService {
     private final ActiveMQClient activeMQClient;
     private final ExampleRepository repository;
 
-    @Value("${rabbitmq.callback.url}")
+    @Value("${activemq.callback.url}")
     private String callbackUrl;
 
     public Mono<Example> sendMessage() {
